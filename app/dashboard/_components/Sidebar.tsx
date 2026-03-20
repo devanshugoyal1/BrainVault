@@ -88,7 +88,7 @@ export default function Sidebar({
 
       {/* Navigation */}
       <nav style={{ padding:"6px 10px 0", display:"flex", flexDirection:"column", gap:"2px" }}>
-        <NavBtn icon="🏠" label="All Notes"  count={counts.all}       active={activeView==="all"}       style={btnStyle(activeView==="all")}       onClick={() => onChangeView("all")}       isDark={isDark} />
+        <NavBtn icon="📝" label="All Notes"  count={counts.all}       active={activeView==="all"}       style={btnStyle(activeView==="all")}       onClick={() => onChangeView("all")}       isDark={isDark} />
         <NavBtn icon="⭐" label="Favorites"  count={counts.favorites}  active={activeView==="favorites"} style={btnStyle(activeView==="favorites")} onClick={() => onChangeView("favorites")} isDark={isDark} />
         <NavBtn icon="🗑️" label="Trash"      count={counts.trash}     active={activeView==="trash"}     style={btnStyle(activeView==="trash")}     onClick={() => onChangeView("trash")}     isDark={isDark} />
       </nav>

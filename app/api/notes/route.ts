@@ -10,7 +10,7 @@ export async function GET() {
   try {
     await connectDB();
     // Sort: pinned first, then by updatedAt descending
-    const notes = await Note.find({ userId: "local" })
+    const notes = await Note.find({ isTrashed: false })
       .sort({ isPinned: -1, updatedAt: -1 })
       .lean()
       .exec();

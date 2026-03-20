@@ -51,7 +51,8 @@ async function apiCreate(data: {
 }
 
 async function apiPatch(id: string, patch: Record<string, unknown>): Promise<void> {
-  if (!id || id.startsWith("temp_")) return;
+  if (!id) return;
+  if (id.startsWith("temp_")) return; // still skip temp, content saves after real ID assigned
   await fetch(`/api/notes/${id}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
@@ -97,9 +98,12 @@ export default function Dashboard() {
 
   // ── Optimistic patch ──────────────────────────────────
   const optimisticPatch = useCallback((id: string, changes: Partial<Note>) => {
-    setNotes(prev => prev.map(n => n.id === id ? { ...n, ...changes } : n));
-    if (!id || id.startsWith("temp_")) return;
-    // Build a clean patch object with only primitive values
+    setNotes(prev => prev.map(n => {
+    if (n.id !== id) return n;
+    const updated = { ...n, ...changes };
+    // If this was a temp note that now has a real ID, skip — handled by create
+    if (!id || id.startsWith("temp_")) return updated;
+    // Fire API patch
     const clean: Record<string, unknown> = {};
     for (const [k, v] of Object.entries(changes)) {
       if (typeof v === "string" || typeof v === "boolean" || Array.isArray(v)) {
@@ -107,6 +111,8 @@ export default function Dashboard() {
       }
     }
     apiPatch(id, clean).catch(err => console.error("Patch error:", err));
+      return updated;
+    }));
   }, []);
 
   // ── Create ────────────────────────────────────────────

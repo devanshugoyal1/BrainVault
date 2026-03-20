@@ -6,8 +6,9 @@ import mongoose from "mongoose";
 
 export async function PATCH(
   request: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await connectDB();
     const { id } = await context.params;

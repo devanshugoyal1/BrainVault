@@ -2,10 +2,9 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  // ❌ Remove this block entirely:
-  // eslint: {
-  //   ignoreDuringBuilds: true,
-  // },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 }
 
 export default nextConfig

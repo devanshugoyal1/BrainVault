@@ -11,7 +11,6 @@ export async function PATCH(
   const { id } = await params;
   try {
     await connectDB();
-    const { id } = await context.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }
@@ -22,19 +21,27 @@ export async function PATCH(
     if ("isFavorite" in body) update.isFavorite = Boolean(body.isFavorite);
     if ("isTrashed"  in body) update.isTrashed  = Boolean(body.isTrashed);
     if ("isPinned"   in body) update.isPinned   = Boolean(body.isPinned);
-    if ("emoji"      in body) update.emoji      = String(body.emoji ?? "📄");
+    if ("emoji"      in body) update.emoji      = String(body.emoji ?? "");
     if ("color"      in body) update.color      = String(body.color ?? "");
     if ("tags"       in body) update.tags       = Array.isArray(body.tags) ? body.tags : [];
     update.updatedAt = new Date();
 
-    const note = await Note.findByIdAndUpdate(id, { $set: update }, { new: true }).lean();
+    const note = await Note.findByIdAndUpdate(
+      id, { $set: update }, { new: true }
+    ).lean();
     if (!note) return NextResponse.json({ error: "Note not found" }, { status: 404 });
 
     const n = note as any;
     return NextResponse.json({
-      id: n._id.toString(), title: n.title, content: n.content,
-      isFavorite: n.isFavorite, isTrashed: n.isTrashed, isPinned: n.isPinned,
-      tags: n.tags, emoji: n.emoji, color: n.color,
+      id: n._id.toString(),
+      title: n.title,
+      content: n.content,
+      isFavorite: n.isFavorite,
+      isTrashed: n.isTrashed,
+      isPinned: n.isPinned,
+      tags: n.tags,
+      emoji: n.emoji,
+      color: n.color,
       createdAt: n.createdAt instanceof Date ? n.createdAt.toISOString() : n.createdAt,
       updatedAt: n.updatedAt instanceof Date ? n.updatedAt.toISOString() : n.updatedAt,
     });
@@ -46,11 +53,11 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  context: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
   try {
     await connectDB();
-    const { id } = await context.params;
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return NextResponse.json({ error: "Invalid ID" }, { status: 400 });
     }

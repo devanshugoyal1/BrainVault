@@ -10,7 +10,7 @@ export async function GET() {
   try {
     await connectDB();
     // Sort: pinned first, then by updatedAt descending
-    const notes = await Note.find({ isTrashed: false })
+    const notes = await Note.find({ $or: [{ isTrashed: false }, { isTrashed: { $exists: false } }] })
       .sort({ isPinned: -1, updatedAt: -1 })
       .lean()
       .exec();
@@ -54,4 +54,4 @@ export async function POST(request: Request) {
     console.error("POST /api/notes error:", error);
     return NextResponse.json({ error: "Failed to create note" }, { status: 500 });
   }
-}
+} 

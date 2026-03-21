@@ -97,7 +97,7 @@ export default function Editor({
     },
     onUpdate: ({ editor }) => {
       setSaveState("saving");
-      if (note) debouncedSave(title, editor.getHTML(), note.id);
+      if (note) debouncedSaveRef.current(title, editor.getHTML(), note.id, onUpdateNote);
     },
   });
 
@@ -114,18 +114,17 @@ export default function Editor({
     editor?.view.dom.setAttribute("style", `font-size:15px;line-height:1.85;color:${textC};min-height:52vh;outline:none;`);
   }, [theme]);
 
-  const debouncedSave = useCallback(
-    debounce((t: string, html: string, id: string) => {
-      onUpdateNote(id, t, html);
+  const debouncedSaveRef = useRef(
+    debounce((t: string, html: string, id: string, cb: (id: string, t: string, h: string) => void) => {
+      cb(id, t, html);
       setSaveState("saved");
-    }, 600),
-    [note?.id]
+    }, 600)
   );
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     setSaveState("saving");
-    if (note && editor) debouncedSave(e.target.value, editor.getHTML(), note.id);
+    if (note && editor) debouncedSaveRef.current(e.target.value, editor.getHTML(), note.id, onUpdateNote);
   };
 
   const handleAddTag = (tag: string) => {

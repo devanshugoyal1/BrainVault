@@ -85,6 +85,10 @@ export default function Editor({
   }, [showEmoji, showColor, showExport]);
 
   // ── Tiptap ────────────────────────────────────────────
+  const noteRef = useRef(note);
+  useEffect(() => { noteRef.current = note; }, [note]);
+  const titleRef = useRef(title);
+  useEffect(() => { titleRef.current = title; }, [title]);
   const editor = useEditor({
     immediatelyRender: false,
     extensions: [
@@ -97,7 +101,7 @@ export default function Editor({
     },
     onUpdate: ({ editor }) => {
       setSaveState("saving");
-      if (note) debouncedSaveRef.current(title, editor.getHTML(), note.id, onUpdateNote);
+      if (noteRef.current) debouncedSaveRef.current(titleRef.current, editor.getHTML(), noteRef.current.id, onUpdateNote);
     },
   });
 
@@ -124,7 +128,7 @@ export default function Editor({
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     setSaveState("saving");
-    if (note && editor) debouncedSaveRef.current(e.target.value, editor.getHTML(), note.id, onUpdateNote);
+    if (noteRef.current) debouncedSaveRef.current(titleRef.current, editor.getHTML(), noteRef.current.id, onUpdateNote);
   };
 
   const handleAddTag = (tag: string) => {

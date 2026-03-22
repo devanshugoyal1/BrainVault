@@ -62,7 +62,6 @@ export default function Editor({
   const [showEmoji, setShowEmoji]     = useState(false);
   const [showColor, setShowColor]     = useState(false);
   const [showExport, setShowExport]   = useState(false);
-  const titleRef   = useRef<HTMLInputElement>(null);
   const tagInputRef = useRef<HTMLInputElement>(null);
 
   const isDark  = theme === "dark";
@@ -128,7 +127,7 @@ export default function Editor({
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
     setSaveState("saving");
-    if (noteRef.current) debouncedSaveRef.current(titleRef.current, editor.getHTML(), noteRef.current.id, onUpdateNote);
+    if (noteRef.current) debouncedSaveRef.current(titleRef.current, editor!.getHTML(), noteRef.current.id, onUpdateNote);
   };
 
   const handleAddTag = (tag: string) => {
@@ -309,7 +308,7 @@ export default function Editor({
             </div>
 
             {/* Title */}
-            <input ref={titleRef} type="text" value={title} onChange={handleTitleChange}
+            <input type="text" value={title} onChange={handleTitleChange}
               placeholder="Untitled"
               style={{ flex:1, background:"transparent", border:"none", outline:"none", fontSize: focusMode ? "34px" : "30px", fontWeight:700, color: isDark ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.88)", lineHeight:1.2, letterSpacing:"-0.02em", paddingTop:"4px", transition:"font-size 0.3s" }}
             />
